@@ -33,5 +33,11 @@ jobs:
           git config --global user.name "GitHub Action Bot"
           git config --global user.email "action@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git add court_availability.csv
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-Update: Neue Scraper-Daten [skip ci]" && git push)
+          
+          # Prüfen, ob die Datei existiert, bevor git add ausgeführt wird
+          if [ -f court_availability.csv ]; then
+            git add court_availability.csv
+            git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-Update: Neue Scraper-Daten [skip ci]" && git push)
+          else
+            echo "Keine CSV-Datei gefunden. Überspringe den Commit."
+          fi
